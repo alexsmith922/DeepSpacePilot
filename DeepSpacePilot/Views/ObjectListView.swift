@@ -197,7 +197,18 @@ public class ObjectListViewModel: ObservableObject {
 
     func sortedObjects(byBestForTonight: Bool) -> [ObjectListItem] {
         if byBestForTonight {
-            return items.sorted { $0.visibility.difficultyScore > $1.visibility.difficultyScore }
+            return items.sorted {
+                // Primary: Difficulty Score (High to Low)
+                if abs($0.visibility.difficultyScore - $1.visibility.difficultyScore) > 0.01 {
+                    return $0.visibility.difficultyScore > $1.visibility.difficultyScore
+                }
+                // Secondary: Altitude (High to Low)
+                if abs($0.visibility.altitude - $1.visibility.altitude) > 0.1 {
+                     return $0.visibility.altitude > $1.visibility.altitude
+                }
+                // Tertiary: ID (Low to High)
+                return $0.object.id < $1.object.id
+            }
         } else {
             return items.sorted { $0.object.id < $1.object.id }
         }

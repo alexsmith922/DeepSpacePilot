@@ -59,23 +59,46 @@ public struct ObjectDetailView: View {
                 .fill(Color.black)
                 .aspectRatio(1.0, contentMode: .fit)
 
-            // Placeholder - in real app would use actual images from asset catalog
-            Image(systemName: iconForType(object.type))
-                .resizable()
-                .scaledToFit()
-                .frame(width: 80, height: 80)
-                .foregroundColor(.white.opacity(0.5))
+            if let url = viewModel.imageURL {
+                AsyncImage(url: url) { phase in
+                    if let image = phase.image {
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                    } else if phase.error != nil {
+                        Image(systemName: iconForType(object.type))
+                            .font(.system(size: 60))
+                            .foregroundColor(.white.opacity(0.3))
+                    } else {
+                        ProgressView()
+                            .tint(.white)
+                    }
+                }
+            } else {
+                Image(systemName: iconForType(object.type))
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 80, height: 80)
+                    .foregroundColor(.white.opacity(0.5))
+            }
 
             VStack {
                 Spacer()
-                Text(object.commonName ?? object.name)
-                    .font(.title2)
-                    .fontWeight(.bold)
-                    .foregroundColor(.white)
-                    .padding()
+                LinearGradient(gradient: Gradient(colors: [.clear, .black.opacity(0.8)]), startPoint: .top, endPoint: .bottom)
+                    .frame(height: 100)
+                    .overlay(
+                        Text(object.commonName ?? object.name)
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .foregroundColor(.white)
+                            .padding()
+                        , alignment: .bottom
+                    )
             }
         }
         .frame(maxHeight: 300)
+        .clipped()
+        .cornerRadius(16)
     }
 
     private var objectInfoSection: some View {
@@ -245,6 +268,7 @@ struct InfoCard: View {
 class ObjectDetailViewModel: ObservableObject {
     let object: SpaceObject
     @Published var currentVisibility: ObjectVisibility?
+    @Published var imageURL: URL?
 
     private var timer: Timer?
 
@@ -254,9 +278,22 @@ class ObjectDetailViewModel: ObservableObject {
 
     func startUpdating() {
         updateVisibility()
+        fetchImage()
         timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { [weak self] _ in
             Task { @MainActor in
                 self?.updateVisibility()
+            }
+        }
+    }
+    
+    private func fetchImage() {
+        Task {
+            do {
+                if let url = try await WikiImageService.shared.fetchImageURL(for: object.name) {
+                    self.imageURL = url
+                }
+            } catch {
+                print("Failed to fetch image for \(object.name): \(error)")
             }
         }
     }
