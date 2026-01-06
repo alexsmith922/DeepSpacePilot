@@ -104,7 +104,7 @@ public struct ObjectDetailView: View {
     private var objectInfoSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Object Information")
-                .font(.headline)
+            .font(.headline)
 
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
                 InfoCard(title: "Type", value: object.type.rawValue)
