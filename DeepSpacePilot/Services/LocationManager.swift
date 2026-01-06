@@ -8,7 +8,10 @@ public class LocationManager: NSObject, ObservableObject, CLLocationManagerDeleg
     private let manager = CLLocationManager()
     
     @Published public var currentUserLocation: UserLocation?
+    @Published public var currentLocationName: String?
     @Published public var authorizationStatus: CLAuthorizationStatus = .notDetermined
+    
+    private let geocoder = CLGeocoder()
     
     private override init() {
         super.init()
@@ -51,6 +54,24 @@ public class LocationManager: NSObject, ObservableObject, CLLocationManagerDeleg
             longitude: location.coordinate.longitude,
             altitude: location.altitude
         )
+        
+        // Reverse Geocode
+        geocoder.reverseGeocodeLocation(location) { [weak self] placemarks, error in
+            guard let self = self, let placemark = placemarks?.first, error == nil else { return }
+            
+            var name = ""
+            if let city = placemark.locality {
+                name += city
+            }
+            if let state = placemark.administrativeArea {
+                if !name.isEmpty { name += ", " }
+                name += state
+            }
+            
+            if !name.isEmpty {
+                self.currentLocationName = name
+            }
+        }
     }
     
     public func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {

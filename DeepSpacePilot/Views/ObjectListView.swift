@@ -10,9 +10,23 @@ public struct ObjectListView: View {
     public var body: some View {
         NavigationStack {
             List {
-                ForEach(viewModel.sortedObjects(byBestForTonight: sortByBestForTonight)) { item in
-                    NavigationLink(destination: ObjectDetailView(object: item.object, visibility: item.visibility)) {
-                        ObjectRowView(item: item)
+                if let locationName = viewModel.locationName {
+                    Section {
+                        HStack {
+                            Image(systemName: "location.fill")
+                                .foregroundColor(.blue)
+                            Text("Observing from \(locationName)")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                }
+                
+                Section {
+                    ForEach(viewModel.sortedObjects(byBestForTonight: sortByBestForTonight)) { item in
+                        NavigationLink(destination: ObjectDetailView(object: item.object, visibility: item.visibility)) {
+                            ObjectRowView(item: item)
+                        }
                     }
                 }
             }
@@ -131,6 +145,7 @@ public class ObjectListViewModel: ObservableObject {
     @Published var items: [ObjectListItem] = []
     @Published var isLoading = false
     @Published var condition: ObservingCondition?
+    @Published var locationName: String?
     
     private var locationTask: Task<Void, Never>?
     private var locationManager = LocationManager.shared
@@ -144,6 +159,12 @@ public class ObjectListViewModel: ObservableObject {
                 }
             }
         }
+        
+        // Observe location name changes
+        locationManager.$currentLocationName
+            .receive(on: RunLoop.main)
+            .assign(to: &$locationName)
+            
         locationManager.requestPermission()
     }
     
