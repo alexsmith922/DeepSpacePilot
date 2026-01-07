@@ -288,14 +288,44 @@ class ObjectDetailViewModel: ObservableObject {
     
     private func fetchImage() {
         Task {
-            do {
-                if let url = try await WikiImageService.shared.fetchImageURL(for: object.name) {
-                    self.imageURL = url
+            // Try multiple search queries in order of likelihood to find a good image
+            let queries = buildSearchQueries()
+
+            for query in queries {
+                do {
+                    if let url = try await WikiImageService.shared.fetchImageURL(for: query) {
+                        self.imageURL = url
+                        return // Found an image, stop searching
+                    }
+                } catch {
+                    // Continue to next query
+                    continue
                 }
-            } catch {
-                print("Failed to fetch image for \(object.name): \(error)")
             }
+            print("No image found for \(object.name) after trying all queries")
         }
+    }
+
+    private func buildSearchQueries() -> [String] {
+        var queries: [String] = []
+
+        // 1. Try common name first (e.g., "Andromeda Galaxy") - best Wikipedia match
+        if let commonName = object.commonName {
+            queries.append(commonName)
+        }
+
+        // 2. Try "Messier X" format (e.g., "Messier 31")
+        queries.append("Messier \(object.id)")
+
+        // 3. Try the catalog name (e.g., "M31")
+        queries.append(object.name)
+
+        // 4. Try common name + type for disambiguation (e.g., "Andromeda Galaxy")
+        if let commonName = object.commonName, !commonName.lowercased().contains(object.type.rawValue.lowercased()) {
+            queries.append("\(commonName) \(object.type.rawValue)")
+        }
+
+        return queries
     }
 
     func stopUpdating() {
