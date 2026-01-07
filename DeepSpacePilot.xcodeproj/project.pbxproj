@@ -7,18 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5EBE57E72F0D655B0083590E /* AstronomyService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EBE57DD2F0D655B0083590E /* AstronomyService.swift */; };
-		5EBE57E82F0D655B0083590E /* LogbookService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EBE57E02F0D655B0083590E /* LogbookService.swift */; };
-		5EBE57E92F0D655B0083590E /* DeepSpacePilotApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EBE57D92F0D655B0083590E /* DeepSpacePilotApp.swift */; };
-		5EBE57EA2F0D655B0083590E /* SpaceObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EBE57DB2F0D655B0083590E /* SpaceObject.swift */; };
-		5EBE57EB2F0D655B0083590E /* ObjectDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EBE57E42F0D655B0083590E /* ObjectDetailView.swift */; };
-		5EBE57EC2F0D655B0083590E /* ObservingCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EBE57DA2F0D655B0083590E /* ObservingCondition.swift */; };
-		5EBE57ED2F0D655B0083590E /* LogbookView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EBE57E32F0D655B0083590E /* LogbookView.swift */; };
-		5EBE57EE2F0D655B0083590E /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EBE57DF2F0D655B0083590E /* LocationManager.swift */; };
-		5EBE57EF2F0D655B0083590E /* CatalogService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EBE57DE2F0D655B0083590E /* CatalogService.swift */; };
-		5EBE57F02F0D655B0083590E /* WeatherService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EBE57E12F0D655B0083590E /* WeatherService.swift */; };
-		5EBE57F12F0D655B0083590E /* ObjectListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EBE57E52F0D655B0083590E /* ObjectListView.swift */; };
-		5EBE57F22F0D655B0083590E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5EBE57D82F0D655B0083590E /* Assets.xcassets */; };
 		5EBE57F52F0D66480083590E /* AABridge in Frameworks */ = {isa = PBXBuildFile; productRef = 5EBE57F42F0D66480083590E /* AABridge */; };
 		5EBE57F72F0D66480083590E /* AAplus in Frameworks */ = {isa = PBXBuildFile; productRef = 5EBE57F62F0D66480083590E /* AAplus */; };
 		5EBE57F92F0D66480083590E /* SwiftAA in Frameworks */ = {isa = PBXBuildFile; productRef = 5EBE57F82F0D66480083590E /* SwiftAA */; };
@@ -26,18 +14,6 @@
 
 /* Begin PBXFileReference section */
 		5EBE57AF2F0D63A50083590E /* DeepSpacePilot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DeepSpacePilot.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		5EBE57D82F0D655B0083590E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		5EBE57D92F0D655B0083590E /* DeepSpacePilotApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepSpacePilotApp.swift; sourceTree = "<group>"; };
-		5EBE57DA2F0D655B0083590E /* ObservingCondition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObservingCondition.swift; sourceTree = "<group>"; };
-		5EBE57DB2F0D655B0083590E /* SpaceObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceObject.swift; sourceTree = "<group>"; };
-		5EBE57DD2F0D655B0083590E /* AstronomyService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AstronomyService.swift; sourceTree = "<group>"; };
-		5EBE57DE2F0D655B0083590E /* CatalogService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogService.swift; sourceTree = "<group>"; };
-		5EBE57DF2F0D655B0083590E /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
-		5EBE57E02F0D655B0083590E /* LogbookService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogbookService.swift; sourceTree = "<group>"; };
-		5EBE57E12F0D655B0083590E /* WeatherService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherService.swift; sourceTree = "<group>"; };
-		5EBE57E32F0D655B0083590E /* LogbookView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogbookView.swift; sourceTree = "<group>"; };
-		5EBE57E42F0D655B0083590E /* ObjectDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectDetailView.swift; sourceTree = "<group>"; };
-		5EBE57E52F0D655B0083590E /* ObjectListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectListView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -67,11 +43,6 @@
 			children = (
 				5EBE57B12F0D63A50083590E /* DeepSpacePilot */,
 				5EBE57B02F0D63A50083590E /* Products */,
-				5EBE57D82F0D655B0083590E /* Assets.xcassets */,
-				5EBE57D92F0D655B0083590E /* DeepSpacePilotApp.swift */,
-				5EBE57DC2F0D655B0083590E /* Models */,
-				5EBE57E22F0D655B0083590E /* Services */,
-				5EBE57E62F0D655B0083590E /* Views */,
 			);
 			sourceTree = "<group>";
 		};
@@ -81,37 +52,6 @@
 				5EBE57AF2F0D63A50083590E /* DeepSpacePilot.app */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		5EBE57DC2F0D655B0083590E /* Models */ = {
-			isa = PBXGroup;
-			children = (
-				5EBE57DA2F0D655B0083590E /* ObservingCondition.swift */,
-				5EBE57DB2F0D655B0083590E /* SpaceObject.swift */,
-			);
-			path = Models;
-			sourceTree = "<group>";
-		};
-		5EBE57E22F0D655B0083590E /* Services */ = {
-			isa = PBXGroup;
-			children = (
-				5EBE57DD2F0D655B0083590E /* AstronomyService.swift */,
-				5EBE57DE2F0D655B0083590E /* CatalogService.swift */,
-				5EBE57DF2F0D655B0083590E /* LocationManager.swift */,
-				5EBE57E02F0D655B0083590E /* LogbookService.swift */,
-				5EBE57E12F0D655B0083590E /* WeatherService.swift */,
-			);
-			path = Services;
-			sourceTree = "<group>";
-		};
-		5EBE57E62F0D655B0083590E /* Views */ = {
-			isa = PBXGroup;
-			children = (
-				5EBE57E32F0D655B0083590E /* LogbookView.swift */,
-				5EBE57E42F0D655B0083590E /* ObjectDetailView.swift */,
-				5EBE57E52F0D655B0083590E /* ObjectListView.swift */,
-			);
-			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -184,7 +124,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5EBE57F22F0D655B0083590E /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -195,17 +134,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5EBE57E72F0D655B0083590E /* AstronomyService.swift in Sources */,
-				5EBE57E82F0D655B0083590E /* LogbookService.swift in Sources */,
-				5EBE57E92F0D655B0083590E /* DeepSpacePilotApp.swift in Sources */,
-				5EBE57EA2F0D655B0083590E /* SpaceObject.swift in Sources */,
-				5EBE57EB2F0D655B0083590E /* ObjectDetailView.swift in Sources */,
-				5EBE57EC2F0D655B0083590E /* ObservingCondition.swift in Sources */,
-				5EBE57ED2F0D655B0083590E /* LogbookView.swift in Sources */,
-				5EBE57EE2F0D655B0083590E /* LocationManager.swift in Sources */,
-				5EBE57EF2F0D655B0083590E /* CatalogService.swift in Sources */,
-				5EBE57F02F0D655B0083590E /* WeatherService.swift in Sources */,
-				5EBE57F12F0D655B0083590E /* ObjectListView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
