@@ -10,15 +10,31 @@ public struct ObjectListView: View {
     public var body: some View {
         NavigationStack {
             List {
-                if let locationName = viewModel.locationName {
+                if let location = viewModel.currentLocation {
                     Section {
-                        HStack {
-                            Image(systemName: "location.fill")
-                                .foregroundColor(.blue)
-                            Text("Observing from \(locationName)")
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
+                        VStack(alignment: .leading, spacing: 8) {
+                            HStack {
+                                Image(systemName: "location.fill")
+                                    .foregroundColor(.blue)
+                                if let locationName = viewModel.locationName {
+                                    Text("Observing from \(locationName)")
+                                        .font(.subheadline)
+                                } else {
+                                    Text("Current Location")
+                                        .font(.subheadline)
+                                }
+                            }
+                            HStack(spacing: 16) {
+                                Label(String(format: "%.4f°", location.latitude), systemImage: "arrow.up.and.down")
+                                Label(String(format: "%.4f°", location.longitude), systemImage: "arrow.left.and.right")
+                                if location.altitude > 0 {
+                                    Label(String(format: "%.0fm", location.altitude), systemImage: "mountain.2")
+                                }
+                            }
+                            .font(.caption)
+                            .foregroundColor(.secondary)
                         }
+                        .padding(.vertical, 4)
                     }
                 }
                 
@@ -146,30 +162,36 @@ public class ObjectListViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var condition: ObservingCondition?
     @Published var locationName: String?
-    
+    @Published var currentLocation: UserLocation?
+
     private var locationTask: Task<Void, Never>?
+    private var locationNameTask: Task<Void, Never>?
     private var locationManager = LocationManager.shared
-    
+
     init() {
         // Observe location changes
         locationTask = Task {
-            for await _ in locationManager.$currentUserLocation.values {
-                if locationManager.currentUserLocation != nil {
+            for await location in locationManager.$currentUserLocation.values {
+                self.currentLocation = location
+                if location != nil {
                    await loadData()
                 }
             }
         }
-        
+
         // Observe location name changes
-        locationManager.$currentLocationName
-            .receive(on: RunLoop.main)
-            .assign(to: &$locationName)
-            
+        locationNameTask = Task {
+            for await name in locationManager.$currentLocationName.values {
+                self.locationName = name
+            }
+        }
+
         locationManager.requestPermission()
     }
     
     deinit {
         locationTask?.cancel()
+        locationNameTask?.cancel()
     }
 
     func loadData() async {
