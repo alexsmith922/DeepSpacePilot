@@ -55,10 +55,10 @@ public struct ObjectDetailView: View {
 
     private var objectImage: some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color.black)
-                .aspectRatio(1.0, contentMode: .fit)
+            // Background
+            Color.black
 
+            // Image content
             if let url = viewModel.imageURL {
                 AsyncImage(url: url) { phase in
                     if let image = phase.image {
@@ -81,23 +81,27 @@ public struct ObjectDetailView: View {
                     .frame(width: 80, height: 80)
                     .foregroundColor(.white.opacity(0.5))
             }
+        }
+        .frame(height: 300)
+        .clipped()
+        .overlay(alignment: .bottom) {
+            // Label overlay - positioned after clipping to ensure visibility
+            ZStack(alignment: .bottom) {
+                LinearGradient(
+                    gradient: Gradient(colors: [.clear, .black.opacity(0.85)]),
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(height: 80)
 
-            VStack {
-                Spacer()
-                LinearGradient(gradient: Gradient(colors: [.clear, .black.opacity(0.8)]), startPoint: .top, endPoint: .bottom)
-                    .frame(height: 100)
-                    .overlay(
-                        Text(object.commonName ?? object.name)
-                            .font(.title2)
-                            .fontWeight(.bold)
-                            .foregroundColor(.white)
-                            .padding()
-                        , alignment: .bottom
-                    )
+                Text(object.commonName ?? object.name)
+                    .font(.title2)
+                    .fontWeight(.bold)
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 12)
             }
         }
-        .frame(maxHeight: 300)
-        .clipped()
         .cornerRadius(16)
     }
 
