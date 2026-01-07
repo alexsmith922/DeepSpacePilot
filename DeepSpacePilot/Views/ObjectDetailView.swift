@@ -35,7 +35,9 @@ public struct ObjectDetailView: View {
                 markAsSeenButton
             }
             .padding()
+            .padding(.bottom, 20) // Extra bottom padding for safe area
         }
+        .scrollContentBackground(.hidden)
         .navigationTitle(object.name)
         #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
@@ -125,11 +127,12 @@ public struct ObjectDetailView: View {
 
             HStack {
                 Text("RA: \(formatRA(object.rightAscension))")
-                    .font(.system(.body, design: .monospaced))
+                    .font(.system(.caption, design: .monospaced))
                 Spacer()
                 Text("Dec: \(formatDec(object.declination))")
-                    .font(.system(.body, design: .monospaced))
+                    .font(.system(.caption, design: .monospaced))
             }
+            .minimumScaleFactor(0.8)
         }
         .padding()
         .background(Color.secondary.opacity(0.1))
