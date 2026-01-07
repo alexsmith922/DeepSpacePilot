@@ -36,6 +36,15 @@ public struct ObjectListView: View {
                         }
                         .padding(.vertical, 4)
                     }
+
+                    // Current Conditions Section
+                    if let condition = viewModel.condition {
+                        Section {
+                            ConditionsView(condition: condition)
+                        } header: {
+                            Text("Tonight's Conditions")
+                        }
+                    }
                 }
                 
                 Section {
@@ -147,6 +156,139 @@ struct DifficultyBadge: View {
             .background(color.opacity(0.2))
             .foregroundColor(color)
             .cornerRadius(8)
+    }
+}
+
+struct ConditionsView: View {
+    let condition: ObservingCondition
+
+    var cloudIcon: String {
+        let cover = condition.cloudCover
+        if cover < 0.1 { return "sun.max.fill" }
+        if cover < 0.3 { return "cloud.sun.fill" }
+        if cover < 0.6 { return "cloud.fill" }
+        if cover < 0.9 { return "smoke.fill" }
+        return "cloud.fog.fill"
+    }
+
+    var cloudColor: Color {
+        let cover = condition.cloudCover
+        if cover < 0.2 { return .green }
+        if cover < 0.5 { return .yellow }
+        return .red
+    }
+
+    var cloudDescription: String {
+        let cover = condition.cloudCover
+        if cover < 0.1 { return "Clear" }
+        if cover < 0.3 { return "Mostly Clear" }
+        if cover < 0.6 { return "Partly Cloudy" }
+        if cover < 0.9 { return "Mostly Cloudy" }
+        return "Overcast"
+    }
+
+    var moonIcon: String {
+        let phase = condition.moonPhase
+        if phase < 0.125 { return "moonphase.new.moon" }
+        if phase < 0.25 { return "moonphase.waxing.crescent" }
+        if phase < 0.375 { return "moonphase.first.quarter" }
+        if phase < 0.5 { return "moonphase.waxing.gibbous" }
+        if phase < 0.625 { return "moonphase.full.moon" }
+        if phase < 0.75 { return "moonphase.waning.gibbous" }
+        if phase < 0.875 { return "moonphase.last.quarter" }
+        return "moonphase.waning.crescent"
+    }
+
+    var moonColor: Color {
+        let phase = condition.moonPhase
+        // New moon is best (dark), full moon is worst (bright)
+        if phase < 0.25 || phase > 0.75 { return .green }
+        if phase < 0.4 || phase > 0.6 { return .yellow }
+        return .red
+    }
+
+    var moonDescription: String {
+        let phase = condition.moonPhase
+        if phase < 0.125 { return "New Moon" }
+        if phase < 0.25 { return "Waxing Crescent" }
+        if phase < 0.375 { return "First Quarter" }
+        if phase < 0.5 { return "Waxing Gibbous" }
+        if phase < 0.625 { return "Full Moon" }
+        if phase < 0.75 { return "Waning Gibbous" }
+        if phase < 0.875 { return "Last Quarter" }
+        return "Waning Crescent"
+    }
+
+    var overallRating: String {
+        let cloudPenalty = condition.cloudCover > 0.7
+        let moonPenalty = condition.moonPhase > 0.4 && condition.moonPhase < 0.6
+
+        if condition.cloudCover > 0.9 {
+            return "Poor - Heavy cloud cover"
+        } else if cloudPenalty && moonPenalty {
+            return "Poor - Clouds & bright moon"
+        } else if cloudPenalty {
+            return "Fair - Cloud cover limiting visibility"
+        } else if moonPenalty {
+            return "Good - Bright moon may wash out faint objects"
+        } else if condition.cloudCover < 0.2 && (condition.moonPhase < 0.25 || condition.moonPhase > 0.75) {
+            return "Excellent - Clear skies, dark moon"
+        } else {
+            return "Good - Favorable conditions"
+        }
+    }
+
+    var overallColor: Color {
+        if condition.cloudCover > 0.9 { return .red }
+        if condition.cloudCover > 0.7 { return .orange }
+        if condition.moonPhase > 0.4 && condition.moonPhase < 0.6 { return .yellow }
+        if condition.cloudCover < 0.2 && (condition.moonPhase < 0.25 || condition.moonPhase > 0.75) { return .green }
+        return .green
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            // Condition indicators
+            HStack(spacing: 20) {
+                // Cloud cover
+                VStack(spacing: 4) {
+                    Image(systemName: cloudIcon)
+                        .font(.title)
+                        .foregroundColor(cloudColor)
+                    Text(cloudDescription)
+                        .font(.caption)
+                    Text("\(Int(condition.cloudCover * 100))%")
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                }
+                .frame(maxWidth: .infinity)
+
+                // Moon phase
+                VStack(spacing: 4) {
+                    Image(systemName: moonIcon)
+                        .font(.title)
+                        .foregroundColor(moonColor)
+                    Text(moonDescription)
+                        .font(.caption)
+                    Text("\(Int(condition.moonPhase * 100))% illuminated")
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                }
+                .frame(maxWidth: .infinity)
+            }
+
+            // Overall rating
+            HStack {
+                Image(systemName: "star.fill")
+                    .foregroundColor(overallColor)
+                Text(overallRating)
+                    .font(.subheadline)
+                    .foregroundColor(overallColor)
+            }
+            .frame(maxWidth: .infinity, alignment: .center)
+            .padding(.top, 4)
+        }
+        .padding(.vertical, 8)
     }
 }
 
