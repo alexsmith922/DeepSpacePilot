@@ -1,6 +1,7 @@
 import SwiftUI
 #if os(iOS)
 import UIKit
+import SafariServices
 internal import Combine
 #elseif os(macOS)
 import AppKit
@@ -12,6 +13,8 @@ public struct ObjectDetailView: View {
 
     @StateObject private var viewModel: ObjectDetailViewModel
     @State private var showingLogConfirmation = false
+    @State private var showingFullScreenImage = false
+    @State private var showingWikipedia = false
 
     public init(object: SpaceObject, visibility: ObjectVisibility) {
         self.object = object
@@ -19,17 +22,28 @@ public struct ObjectDetailView: View {
         _viewModel = StateObject(wrappedValue: ObjectDetailViewModel(object: object))
     }
 
+    private var wikipediaURL: URL? {
+        let searchTerm = object.commonName ?? "Messier \(object.id)"
+        let encoded = searchTerm.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        return URL(string: "https://en.wikipedia.org/wiki/\(encoded)")
+    }
+
     public var body: some View {
         ScrollView {
             VStack(spacing: 20) {
-                // Object Image
+                // Object Image (tappable)
                 objectImage
+                    .onTapGesture {
+                        if viewModel.imageURL != nil {
+                            showingFullScreenImage = true
+                        }
+                    }
+
+                // Current Visibility (moved above Object Info)
+                visibilitySection
 
                 // Object Info
                 objectInfoSection
-
-                // Current Visibility
-                visibilitySection
 
                 // Mark as Seen Button
                 markAsSeenButton
@@ -41,6 +55,23 @@ public struct ObjectDetailView: View {
         .navigationTitle(object.name)
         #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
+        .fullScreenCover(isPresented: $showingFullScreenImage) {
+            FullScreenImageView(
+                imageURL: viewModel.imageURL,
+                objectName: object.commonName ?? object.name,
+                onWikipediaTap: {
+                    showingFullScreenImage = false
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        showingWikipedia = true
+                    }
+                }
+            )
+        }
+        .sheet(isPresented: $showingWikipedia) {
+            if let url = wikipediaURL {
+                SafariView(url: url)
+            }
+        }
         #endif
         .alert("Logged!", isPresented: $showingLogConfirmation) {
             Button("OK", role: .cancel) {}
@@ -358,3 +389,82 @@ class ObjectDetailViewModel: ObservableObject {
         currentVisibility = AstronomyService.shared.calculateVisibility(for: object, condition: condition)
     }
 }
+
+// MARK: - Full Screen Image View
+
+#if os(iOS)
+struct FullScreenImageView: View {
+    let imageURL: URL?
+    let objectName: String
+    let onWikipediaTap: () -> Void
+
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            ZStack {
+                Color.black.ignoresSafeArea()
+
+                if let url = imageURL {
+                    AsyncImage(url: url) { phase in
+                        if let image = phase.image {
+                            image
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                        } else if phase.error != nil {
+                            VStack {
+                                Image(systemName: "photo")
+                                    .font(.largeTitle)
+                                    .foregroundColor(.gray)
+                                Text("Failed to load image")
+                                    .foregroundColor(.gray)
+                            }
+                        } else {
+                            ProgressView()
+                                .tint(.white)
+                        }
+                    }
+                }
+            }
+            .navigationTitle(objectName)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Close") {
+                        dismiss()
+                    }
+                }
+                ToolbarItem(placement: .primaryAction) {
+                    Button {
+                        onWikipediaTap()
+                    } label: {
+                        HStack {
+                            Image(systemName: "book.fill")
+                            Text("Wikipedia")
+                        }
+                    }
+                }
+            }
+            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbarBackground(Color.black.opacity(0.8), for: .navigationBar)
+            .toolbarColorScheme(.dark, for: .navigationBar)
+        }
+    }
+}
+
+// MARK: - Safari View
+
+struct SafariView: UIViewControllerRepresentable {
+    let url: URL
+
+    func makeUIViewController(context: Context) -> SFSafariViewController {
+        let config = SFSafariViewController.Configuration()
+        config.entersReaderIfAvailable = false
+        let safari = SFSafariViewController(url: url, configuration: config)
+        safari.preferredControlTintColor = .systemBlue
+        return safari
+    }
+
+    func updateUIViewController(_ uiViewController: SFSafariViewController, context: Context) {}
+}
+#endif
