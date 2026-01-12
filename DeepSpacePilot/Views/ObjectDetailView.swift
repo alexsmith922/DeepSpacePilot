@@ -48,10 +48,13 @@ public struct ObjectDetailView: View {
                 // Mark as Seen Button
                 markAsSeenButton
             }
-            .padding()
-            .padding(.bottom, 20) // Extra bottom padding for safe area
+            .padding(.horizontal)
+            .padding(.top)
+            .padding(.bottom, 40) // Extra bottom padding for safe area
         }
         .scrollContentBackground(.hidden)
+        .scrollIndicators(.hidden)
+        .contentMargins(.bottom, 20, for: .scrollContent)
         .navigationTitle(object.name)
         #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
@@ -198,7 +201,7 @@ public struct ObjectDetailView: View {
 
             HStack {
                 VStack(alignment: .leading) {
-                    Text("Tonight's Score")
+                    Text("Visibility Score")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                     Text(String(format: "%.1f / 10", viewModel.currentVisibility?.difficultyScore ?? visibility.difficultyScore))

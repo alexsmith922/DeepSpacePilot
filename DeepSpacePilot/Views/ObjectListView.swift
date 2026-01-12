@@ -42,7 +42,7 @@ public struct ObjectListView: View {
                         Section {
                             ConditionsView(condition: condition)
                         } header: {
-                            Text("Tonight's Conditions")
+                            Text("Current Conditions")
                         }
                     }
                 }
