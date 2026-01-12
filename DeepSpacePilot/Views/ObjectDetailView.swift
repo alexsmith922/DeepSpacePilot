@@ -310,6 +310,7 @@ class ObjectDetailViewModel: ObservableObject {
     let object: SpaceObject
     @Published var currentVisibility: ObjectVisibility?
     @Published var imageURL: URL?
+    @Published var cloudCover: Double = 0.0
 
     private var timer: Timer?
 
@@ -318,11 +319,13 @@ class ObjectDetailViewModel: ObservableObject {
     }
 
     func startUpdating() {
-        updateVisibility()
+        Task {
+            await updateVisibility()
+        }
         fetchImage()
         timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { [weak self] _ in
             Task { @MainActor in
-                self?.updateVisibility()
+                await self?.updateVisibility()
             }
         }
     }
@@ -374,15 +377,25 @@ class ObjectDetailViewModel: ObservableObject {
         timer = nil
     }
 
-    private func updateVisibility() {
+    private func updateVisibility() async {
         guard let location = LocationManager.shared.currentUserLocation else {
             // Cannot update visibility without location
-            // Could return or set to nil to indicate "Waiting for location..."
             return
         }
 
+        // Fetch actual cloud cover from weather API
+        do {
+            cloudCover = try await WeatherService.shared.fetchCurrentCloudCover(
+                latitude: location.latitude,
+                longitude: location.longitude
+            )
+        } catch {
+            // Keep previous cloud cover value on error, or assume clear
+            cloudCover = 0.0
+        }
+
         let condition = ObservingCondition(
-            cloudCover: 0.0,
+            cloudCover: cloudCover,
             moonPhase: AstronomyService.shared.calculateCurrentMoonPhase(date: Date()),
             lightPollution: 6,
             date: Date(),
