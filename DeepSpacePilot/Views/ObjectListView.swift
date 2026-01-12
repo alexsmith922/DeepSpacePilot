@@ -161,6 +161,8 @@ struct DifficultyBadge: View {
 
 struct ConditionsView: View {
     let condition: ObservingCondition
+    @ObservedObject private var bortleSettings = BortleSettings.shared
+    @State private var showingBortleSettings = false
 
     var cloudIcon: String {
         let cover = condition.cloudCover
@@ -249,7 +251,7 @@ struct ConditionsView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             // Condition indicators
-            HStack(spacing: 20) {
+            HStack(spacing: 16) {
                 // Cloud cover
                 VStack(spacing: 4) {
                     Image(systemName: cloudIcon)
@@ -275,6 +277,24 @@ struct ConditionsView: View {
                         .foregroundColor(.secondary)
                 }
                 .frame(maxWidth: .infinity)
+
+                // Bortle Scale (tappable)
+                Button(action: {
+                    showingBortleSettings = true
+                }) {
+                    VStack(spacing: 4) {
+                        Image(systemName: bortleSettings.currentScale.icon)
+                            .font(.title)
+                            .foregroundColor(bortleSettings.currentScale.color)
+                        Text("Bortle \(bortleSettings.currentScale.rawValue)")
+                            .font(.caption)
+                        Text(bortleSettings.currentScale.shortName)
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                    }
+                    .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.plain)
             }
 
             // Overall rating
@@ -289,6 +309,9 @@ struct ConditionsView: View {
             .padding(.top, 4)
         }
         .padding(.vertical, 8)
+        .sheet(isPresented: $showingBortleSettings) {
+            BortleSettingsView()
+        }
     }
 }
 
@@ -363,7 +386,7 @@ public class ObjectListViewModel: ObservableObject {
         let condition = ObservingCondition(
             cloudCover: cloudCover,
             moonPhase: currentMoonPhase,
-            lightPollution: 6, // Still default, would need settings for this
+            lightPollution: BortleSettings.shared.currentScale.rawValue,
             date: Date(),
             location: location
         )

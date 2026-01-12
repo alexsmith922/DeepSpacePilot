@@ -397,7 +397,7 @@ class ObjectDetailViewModel: ObservableObject {
         let condition = ObservingCondition(
             cloudCover: cloudCover,
             moonPhase: AstronomyService.shared.calculateCurrentMoonPhase(date: Date()),
-            lightPollution: 6,
+            lightPollution: BortleSettings.shared.currentScale.rawValue,
             date: Date(),
             location: location
         )
